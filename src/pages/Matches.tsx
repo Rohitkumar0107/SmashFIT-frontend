@@ -54,7 +54,7 @@ const Matches = () => {
   };
 
   const filteredMatches = useMemo(() => {
-    return matches.filter(m => m.status === activeTab);
+    return matches.filter(m => m.status.toUpperCase() === activeTab.toUpperCase());
   }, [matches, activeTab]);
 
   return (
