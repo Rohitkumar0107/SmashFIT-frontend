@@ -3,17 +3,17 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth.service';
-import bgImage from '../assets/bg.png'; 
+import bgImage from '../assets/bg.png';
 
 const Register = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // Naya state
-  
+
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,29 +26,29 @@ const Register = () => {
     e.preventDefault();
     setError('');
     setSuccessMsg('');
-    
+
     try {
-        await authService.register(fullName, email, password);
-        setSuccessMsg("Account created! Please login now.");
-        
-        // After registration, send them to login so they can sign in
-        setTimeout(() => {
-            navigate('/login');
-        }, 1500);
+      await authService.register(fullName, email, password);
+      setSuccessMsg("Account created! Please login now.");
+
+      // After registration, send them to login so they can sign in
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
 
     } catch (err: unknown) {
-        const msg = axios.isAxiosError(err)
-          ? err.response?.data?.message || err.message
-          : err instanceof Error
+      const msg = axios.isAxiosError(err)
+        ? err.response?.data?.message || err.message
+        : err instanceof Error
           ? err.message
           : 'Registration failed. Please try again.';
-        setError(msg);
+      setError(msg);
     }
   };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center">
-      
+
       {/* Background Image Layer */}
       <div className="absolute inset-0 z-0">
         <img
@@ -60,11 +60,11 @@ const Register = () => {
       <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
 
       {/* Register Card */}
-      <div className="relative z-20 bg-white p-8 rounded-xl shadow-2xl w-96 backdrop-blur-sm bg-white/95">
+      <div className="relative z-20 bg-white/90 p-6 md:p-8 rounded-xl shadow-2xl w-[90%] sm:w-96 max-w-md backdrop-blur-md">
         <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-800">
           Join Smash<span className="text-blue-600">FIT</span>
         </h2>
-        
+
         {/* Messages */}
         {error && <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded mb-4 text-sm">{error}</div>}
         {successMsg && <div className="bg-green-50 border-l-4 border-green-500 text-green-700 p-3 rounded mb-4 text-sm font-semibold">{successMsg}</div>}
@@ -72,41 +72,41 @@ const Register = () => {
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
             <label className="block text-gray-700 text-sm font-semibold mb-2">Full Name</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               placeholder="Enter your name"
-              required 
+              required
             />
           </div>
           <div>
             <label className="block text-gray-700 text-sm font-semibold mb-2">Email Address</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               placeholder="name@example.com"
-              required 
+              required
             />
           </div>
-          
+
           {/* Password Field with Eye Icon */}
           <div>
             <label className="block text-gray-700 text-sm font-semibold mb-2">Password</label>
             <div className="relative">
-              <input 
-                type={showPassword ? "text" : "password"} 
+              <input
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 placeholder="••••••••"
                 minLength={6}
-                required 
+                required
               />
-              <button 
+              <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -126,14 +126,14 @@ const Register = () => {
               </button>
             </div>
           </div>
-          
+
           <button type="submit" className="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-200 mt-2 shadow-md hover:shadow-lg">
             Create Account
           </button>
         </form>
 
         <div className="mt-6 text-center text-sm text-gray-600">
-            Already have an account? <Link to="/login" className="font-medium text-blue-600 hover:underline">Sign in here</Link>
+          Already have an account? <Link to="/login" className="font-medium text-blue-600 hover:underline">Sign in here</Link>
         </div>
 
       </div>

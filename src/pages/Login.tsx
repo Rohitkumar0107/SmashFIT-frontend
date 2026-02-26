@@ -4,14 +4,14 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth.service';
 import { GoogleLogin } from '@react-oauth/google';
-import bgImage from '../assets/bg.png'; 
+import bgImage from '../assets/bg.png';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false); // Naya state
   const [error, setError] = useState('');
-  
+
   const navigate = useNavigate();
 
   // if already logged in, go straight to dashboard
@@ -25,52 +25,52 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     try {
-        const response = await authService.login(email, password);
-        
-        // Response se accessToken nikalo
-        if (response.accessToken) {
-          localStorage.setItem('accessToken', response.accessToken);
-          // after successful login redirect to dashboard
-          navigate('/dashboard');
-        }
+      const response = await authService.login(email, password);
+
+      // Response se accessToken nikalo
+      if (response.accessToken) {
+        localStorage.setItem('accessToken', response.accessToken);
+        // after successful login redirect to dashboard
+        navigate('/dashboard');
+      }
     } catch (err: unknown) {
-        const msg = axios.isAxiosError(err)
-          ? err.response?.data?.message || err.message
-          : err instanceof Error
+      const msg = axios.isAxiosError(err)
+        ? err.response?.data?.message || err.message
+        : err instanceof Error
           ? err.message
           : 'Login failed. Please try again.';
-        setError(msg);
+      setError(msg);
     }
   };
 
   // 2. Google Login Success Handler
-const handleGoogleSuccess = async (credentialResponse: {
+  const handleGoogleSuccess = async (credentialResponse: {
     credential?: string;
   }) => {
-      try {
-          const idToken = credentialResponse.credential;
-          const response = await authService.googleLogin(idToken!);
-          
-          // Response se accessToken nikalo
-          if (response.accessToken) {
-            localStorage.setItem('accessToken', response.accessToken);
-            navigate('/dashboard');
-          }
-      } catch (err: unknown) {
-          const msg = axios.isAxiosError(err)
-            ? err.response?.data?.message || err.message
-            : err instanceof Error
-            ? err.message
-            : 'Google Login failed on backend.';
-          setError(msg);
+    try {
+      const idToken = credentialResponse.credential;
+      const response = await authService.googleLogin(idToken!);
+
+      // Response se accessToken nikalo
+      if (response.accessToken) {
+        localStorage.setItem('accessToken', response.accessToken);
+        navigate('/dashboard');
+      }
+    } catch (err: unknown) {
+      const msg = axios.isAxiosError(err)
+        ? err.response?.data?.message || err.message
+        : err instanceof Error
+          ? err.message
+          : 'Google Login failed on backend.';
+      setError(msg);
     }
   };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center">
-      
+
       {/* Background Image & Overlay */}
       <div className="absolute inset-0 z-0">
         <img
@@ -82,7 +82,7 @@ const handleGoogleSuccess = async (credentialResponse: {
       <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
 
       {/* Login Card */}
-      <div className="relative z-20 bg-white p-8 rounded-xl shadow-2xl w-96 backdrop-blur-sm bg-white/95">
+      <div className="relative z-20 bg-white/90 p-6 md:p-8 rounded-xl shadow-2xl w-[90%] sm:w-96 max-w-md backdrop-blur-md">
         <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-800">
           Smash<span className="text-blue-600">FIT</span>
         </h2>
@@ -92,29 +92,29 @@ const handleGoogleSuccess = async (credentialResponse: {
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
             <label className="block text-gray-700 text-sm font-semibold mb-2">Email Address</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
               placeholder="name@example.com"
-              required 
+              required
             />
           </div>
-          
+
           {/* Password Field with Eye Icon */}
           <div>
             <label className="block text-gray-700 text-sm font-semibold mb-2">Password</label>
             <div className="relative">
-              <input 
-                type={showPassword ? "text" : "password"} 
+              <input
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                 placeholder="••••••••"
-                required 
+                required
               />
-              <button 
+              <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
@@ -154,7 +154,7 @@ const handleGoogleSuccess = async (credentialResponse: {
         </div>
 
         <div className="mt-8 text-center text-sm text-gray-600">
-            Don't have an account? <Link to="/register" className="font-medium text-blue-600 hover:underline">Register now</Link>
+          Don't have an account? <Link to="/register" className="font-medium text-blue-600 hover:underline">Register now</Link>
         </div>
       </div>
     </div>
