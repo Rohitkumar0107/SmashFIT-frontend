@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 
 const ActivityItem = ({ text, time }: any) => (
   <div className="flex items-start gap-3">

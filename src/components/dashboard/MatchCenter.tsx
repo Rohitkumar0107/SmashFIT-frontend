@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Swords } from 'lucide-react';
 import DashboardMatchCard from '../cards/DashboardMatchCard';

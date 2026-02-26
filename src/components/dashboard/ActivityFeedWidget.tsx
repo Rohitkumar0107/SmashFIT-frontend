@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import ActivityItem from '../shared/ActivityItem';
 
 const ActivityFeedWidget = () => {

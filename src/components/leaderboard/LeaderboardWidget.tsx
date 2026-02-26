@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, Activity, Trophy } from 'lucide-react';
+import { ChevronRight, Trophy } from 'lucide-react';
 import api from '../../services/api'; // 👈 Tera axios instance zinda ho gaya
 
 const LeaderboardWidget = () => {

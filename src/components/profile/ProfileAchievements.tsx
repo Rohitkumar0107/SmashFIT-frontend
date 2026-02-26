@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { Activity, Trophy, Medal } from 'lucide-react';
 
 const ProfileAchievements = () => {

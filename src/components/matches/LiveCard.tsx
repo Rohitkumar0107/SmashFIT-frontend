@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { MapPin } from 'lucide-react';
 import { formatPlayers } from '../../utils/formatters';
 

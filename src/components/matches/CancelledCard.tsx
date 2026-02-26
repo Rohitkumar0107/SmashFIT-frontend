@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { XCircle } from 'lucide-react';
 import { formatPlayers } from '../../utils/formatters';
 
