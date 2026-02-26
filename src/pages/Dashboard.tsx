@@ -21,11 +21,15 @@ const Dashboard = () => {
       try {
         setLoading(true);
         const response = await api.get('/matches/all');
+        console.log('dashboard matches response', response.data);
         if (response.data.success) {
-          setMatches(response.data.data);
+          setMatches(response.data.data || []);
+        } else {
+          setMatches([]);
         }
       } catch (error) {
         console.error("Dashboard match fetch error:", error);
+        setMatches([]);
       } finally {
         setLoading(false);
       }
@@ -35,10 +39,12 @@ const Dashboard = () => {
 
   // 💡 Pro Tip: useMemo se ye filters baar-baar nahi chalenge har render pe
   const { liveCount, upcomingCount, completedCount } = useMemo(() => {
+    // normalise status so we don't depend on casing from API
+    const norm = (s: string) => s?.toUpperCase();
     return {
-      liveCount: matches.filter(m => m.status === 'Live').length,
-      upcomingCount: matches.filter(m => m.status === 'Upcoming').length,
-      completedCount: matches.filter(m => m.status === 'Completed').length,
+      liveCount: matches.filter(m => norm(m.status) === 'LIVE').length,
+      upcomingCount: matches.filter(m => norm(m.status) === 'UPCOMING').length,
+      completedCount: matches.filter(m => norm(m.status) === 'COMPLETED').length,
     };
   }, [matches]);
 

@@ -7,7 +7,9 @@ const MatchCenter = ({ matches, loading }: { matches: any[], loading: boolean })
   const navigate = useNavigate();
   const [matchTab, setMatchTab] = useState('Live'); 
 
-  const filteredMatches = matches.filter(m => m.status === matchTab).slice(0, 4);
+  const filteredMatches = matches
+    .filter(m => m.status?.toUpperCase() === matchTab.toUpperCase())
+    .slice(0, 4);
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">

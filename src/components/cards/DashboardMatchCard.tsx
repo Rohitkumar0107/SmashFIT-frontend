@@ -8,7 +8,7 @@ const formatPlayers = (players: any[]) => {
 };
 
 const DashboardMatchCard = ({ match, onClick }: { match: any, onClick: () => void }) => {
-  const isLive = match.status === 'Live';
+  const isLive = match.status?.toUpperCase() === 'LIVE';
   const scores = match.scores && match.scores.length > 0 ? match.scores[match.scores.length - 1] : { side_a_score: 0, side_b_score: 0 };
 
   return (
