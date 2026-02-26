@@ -31,4 +31,11 @@ export const authService = {
     const response = await api.get("/auth/me");
     return response.data;
   },
+
+  // 5. Logout (clears refresh token on server)
+  logout: async () => {
+    // backend will remove cookie; we still clear localStorage on frontend
+    const response = await api.post("/auth/logout");
+    return response.data;
+  },
 };

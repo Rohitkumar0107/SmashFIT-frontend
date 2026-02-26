@@ -1,5 +1,6 @@
 // src/pages/Login.tsx
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth.service';
 import { GoogleLogin } from '@react-oauth/google';
@@ -31,27 +32,39 @@ const Login = () => {
         // Response se accessToken nikalo
         if (response.accessToken) {
           localStorage.setItem('accessToken', response.accessToken);
-          // user details will be fetched in dashboard via /auth/me
+          // after successful login redirect to dashboard
           navigate('/dashboard');
         }
-    } catch (err: any) {
-        setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } catch (err: unknown) {
+        const msg = axios.isAxiosError(err)
+          ? err.response?.data?.message || err.message
+          : err instanceof Error
+          ? err.message
+          : 'Login failed. Please try again.';
+        setError(msg);
     }
   };
 
   // 2. Google Login Success Handler
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-        const idToken = credentialResponse.credential;
-        const response = await authService.googleLogin(idToken);
-        
-        // Response se accessToken nikalo
-        if (response.accessToken) {
-          localStorage.setItem('accessToken', response.accessToken);
-          navigate('/dashboard');
-        }
-    } catch (err: any) {
-        setError(err.response?.data?.message || 'Google Login failed on backend.');
+const handleGoogleSuccess = async (credentialResponse: {
+    credential?: string;
+  }) => {
+      try {
+          const idToken = credentialResponse.credential;
+          const response = await authService.googleLogin(idToken!);
+          
+          // Response se accessToken nikalo
+          if (response.accessToken) {
+            localStorage.setItem('accessToken', response.accessToken);
+            navigate('/dashboard');
+          }
+      } catch (err: unknown) {
+          const msg = axios.isAxiosError(err)
+            ? err.response?.data?.message || err.message
+            : err instanceof Error
+            ? err.message
+            : 'Google Login failed on backend.';
+          setError(msg);
     }
   };
 
@@ -59,7 +72,13 @@ const Login = () => {
     <div className="relative min-h-screen flex items-center justify-center">
       
       {/* Background Image & Overlay */}
-      <div className="absolute inset-0 bg-cover bg-center z-0" style={{ backgroundImage: `url(${bgImage})` }}></div>
+      <div className="absolute inset-0 z-0">
+        <img
+          src={bgImage}
+          alt="background"
+          className="w-full h-full object-cover"
+        />
+      </div>
       <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
 
       {/* Login Card */}

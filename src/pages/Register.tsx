@@ -1,5 +1,6 @@
 // src/pages/Register.tsx
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/auth.service';
 import bgImage from '../assets/bg.png'; 
@@ -28,15 +29,20 @@ const Register = () => {
     
     try {
         await authService.register(fullName, email, password);
-        setSuccessMsg("Account created! Redirecting to login...");
+        setSuccessMsg("Account created! Please login now.");
         
         // After registration, send them to login so they can sign in
         setTimeout(() => {
             navigate('/login');
         }, 1500);
 
-    } catch (err: any) {
-        setError(err.response?.data?.message || 'Registration failed. Please try again.');
+    } catch (err: unknown) {
+        const msg = axios.isAxiosError(err)
+          ? err.response?.data?.message || err.message
+          : err instanceof Error
+          ? err.message
+          : 'Registration failed. Please try again.';
+        setError(msg);
     }
   };
 
@@ -44,7 +50,13 @@ const Register = () => {
     <div className="relative min-h-screen flex items-center justify-center">
       
       {/* Background Image Layer */}
-      <div className="absolute inset-0 bg-cover bg-center z-0" style={{ backgroundImage: `url(${bgImage})` }}></div>
+      <div className="absolute inset-0 z-0">
+        <img
+          src={bgImage}
+          alt="background"
+          className="w-full h-full object-cover"
+        />
+      </div>
       <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
 
       {/* Register Card */}
