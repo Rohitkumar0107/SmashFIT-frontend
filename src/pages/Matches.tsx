@@ -19,6 +19,9 @@ const Matches = () => {
   const [activeTab, setActiveTab] = useState(location.state?.tab || 'Live');
   const [matches, setMatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    console.log('matches state updated', matches);
+  }, [matches]);
 
   useEffect(() => {
     if (location.state?.tab) {
@@ -32,11 +35,15 @@ const Matches = () => {
       try {
         setLoading(true);
         const response = await api.get('/matches/all'); 
+        console.log('API response for matches', response.data);
         if (response.data.success) {
-          setMatches(response.data.data);
+          setMatches(response.data.data || []);
+        } else {
+          setMatches([]);
         }
       } catch (error) {
         console.error("Failed to fetch matches:", error);
+        setMatches([]);
       } finally {
         setLoading(false);
       }
@@ -54,8 +61,11 @@ const Matches = () => {
   };
 
   const filteredMatches = useMemo(() => {
-    return matches.filter(m => m.status.toUpperCase() === activeTab.toUpperCase());
+    const filtered = matches.filter(m => m.status.toUpperCase() === activeTab.toUpperCase());
+    console.log('filtering', activeTab, '->', filtered.length, 'matches');
+    return filtered;
   }, [matches, activeTab]);
+
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
@@ -80,18 +90,21 @@ const Matches = () => {
       ) : (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {filteredMatches.length > 0 ? (
-            filteredMatches.map((match) => (
-              <div 
-                key={match.id}
-                onClick={() => handleCardClick(match.id)} 
-                className="cursor-pointer"
-              >
-                {match.status === 'Live' && <LiveCard match={match} />}
-                {match.status === 'Upcoming' && <UpcomingCard match={match} />}
-                {match.status === 'Completed' && <CompletedCard match={match} />}
-                {match.status === 'Cancelled' && <CancelledCard match={match} />}
-              </div>
-            ))
+            filteredMatches.map((match) => {
+              const status = match.status?.toUpperCase();
+              return (
+                <div 
+                  key={match.id}
+                  onClick={() => handleCardClick(match.id)} 
+                  className="cursor-pointer"
+                >
+                  {status === 'LIVE' && <LiveCard match={match} />}
+                  {status === 'UPCOMING' && <UpcomingCard match={match} />}
+                  {status === 'COMPLETED' && <CompletedCard match={match} />}
+                  {status === 'CANCELLED' && <CancelledCard match={match} />}
+                </div>
+              );
+            })
           ) : (
             <EmptyState 
               icon={<Search size={48} />} 
