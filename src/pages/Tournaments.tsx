@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, Calendar, MapPin, Search, Loader2, Users, ArrowRight } from 'lucide-react';
+import { Trophy, Calendar, MapPin, Search, Loader2, ArrowRight } from 'lucide-react';
 import { tournamentService } from '../services/tournament.service';
 
 const TournamentsPage = () => {

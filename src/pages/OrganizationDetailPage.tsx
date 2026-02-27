@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, MapPin, CheckCircle2, Wind, CarFront, Droplets, Bath, 
-  Mail, FileText, Layers, Edit3, Loader2, AlertCircle, Building, Trophy, Plus
+  Mail, FileText, Layers, Edit3, Loader2, AlertCircle, Building, Trophy
 } from 'lucide-react';
 import { organizationService } from '../services/organization.service';
 
