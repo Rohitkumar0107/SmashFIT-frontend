@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Swords, Trophy, BarChart3,
-  Search, Bell, Settings, CheckCircle2, User, LogOut, Menu, X
+  Search, Bell, Settings, CheckCircle2, User, LogOut, Menu, X, Building
 } from 'lucide-react';
 import { authService } from '../services/auth.service';
 
@@ -77,6 +77,7 @@ const Layout = () => {
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Matches', path: '/matches', icon: Swords },
     { name: 'Tournaments', path: '/tournaments', icon: Trophy },
+    { name: 'Organizations', path: '/organizations', icon: Building },
     { name: 'Leaderboard', path: '/leaderboard', icon: BarChart3 },
   ];
 

@@ -1,131 +1,222 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Swords, Trophy } from 'lucide-react';
-import api from '../services/api';
+import { 
+  ArrowLeft, Calendar, MapPin, Trophy, Users, AlertCircle, 
+  Loader2, CheckCircle2, Clock, Activity
+} from 'lucide-react';
+import { tournamentService } from '../services/tournament.service';
 
-// Shared & Feature Components
-import TabNavigation from '../components/ui/TabNavigation';
-import SkeletonLoader from '../components/ui/SkeletonLoader';
-import EmptyState from '../components/ui/EmptyState';
-import TournamentHero from '../components/tournament-detail/TournamentHero';
-import TournamentSidebar from '../components/tournament-detail/TournamentSidebar';
-import CategoryCard from '../components/tournament-detail/CategoryCard';
-import TournamentRules from '../components/tournament-detail/TournamentRules';
-
-const TournamentDetail = () => {
+const TournamentDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('OVERVIEW');
   
-  const [t, setT] = useState<any>(null);
+  const [tournament, setTournament] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  
+  // Registration States
+  const [registeringId, setRegisteringId] = useState<string | null>(null);
+  const [regMessage, setRegMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
-    const fetchTournament = async () => {
-      if (!id || id === 'undefined') return;
-
+    const fetchDetails = async () => {
       try {
+        if (!id) return;
         setLoading(true);
-        const response = await api.get(`/tournaments/${id}`);
-        if (response.data.success) {
-          setT(response.data.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch tournament details:", error);
+        const data = await tournamentService.getById(id);
+        setTournament(data);
+      } catch (err: any) {
+        setError('Failed to load tournament details.');
       } finally {
         setLoading(false);
       }
     };
-
-    fetchTournament();
+    fetchDetails();
   }, [id]);
 
-  if (loading) {
-    return <SkeletonLoader text="Loading Arena..." minHeight="min-h-[60vh]" />;
-  }
+  const handleRegister = async (categoryId: string) => {
+    try {
+      setRegisteringId(categoryId);
+      setRegMessage({ type: '', text: '' });
+      
+      await tournamentService.register(categoryId);
+      
+      setRegMessage({ type: 'success', text: 'Successfully registered for the event!' });
+      
+      // Optimitiscally update slots
+      setTournament((prev: any) => ({
+        ...prev,
+        categories: prev.categories.map((cat: any) => 
+          cat.id === categoryId ? { ...cat, current_slots: cat.current_slots + 1 } : cat
+        )
+      }));
 
-  if (!t) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <EmptyState 
-          icon={<Trophy size={64} className="text-slate-300" />} 
-          title="Tournament Not Found" 
-          subtitle="The arena you are looking for doesn't exist." 
-        />
-        <button 
-          onClick={() => navigate('/tournaments')} 
-          className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg"
-        >
-          Back to Tournaments
-        </button>
-      </div>
-    );
-  }
+    } catch (err: any) {
+      setRegMessage({ type: 'error', text: err.response?.data?.message || err.message || 'Registration failed.' });
+    } finally {
+      setRegisteringId(null);
+    }
+  };
 
-  const isRegistrationOpen = t.status === 'REGISTRATION_OPEN';
-  const startDate = new Date(t.startDate).toLocaleDateString([], { day: 'numeric', month: 'long', year: 'numeric' });
-  const deadlineDate = t.registrationDeadline 
-    ? new Date(t.registrationDeadline).toLocaleDateString([], { day: 'numeric', month: 'short' })
-    : 'TBA';
+  const formatDate = (dateString: string) => {
+    if (!dateString) return 'TBA'; // 👈 Safefall for missing dates
+    return new Date(dateString).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+  };
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh]"><Loader2 className="w-12 h-12 text-blue-600 animate-spin" /></div>
+  );
+
+  if (error || !tournament) return (
+    <div className="text-center mt-20"><h2 className="text-2xl font-bold text-red-500">Tournament not found</h2></div>
+  );
 
   return (
-    <div className="animate-in fade-in duration-500 pb-24">
+    <div className="max-w-5xl mx-auto animate-in fade-in duration-500 pb-12 px-4">
       
-      {/* 1. HERO COMPONENT */}
-      <TournamentHero tournament={t} isRegistrationOpen={isRegistrationOpen} />
+      {/* 🔙 Back Button */}
+      <button onClick={() => navigate('/tournaments')} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold mb-6 bg-white px-5 py-2.5 rounded-2xl shadow-sm border border-slate-200 transition-all">
+        <ArrowLeft size={18} /> Back to Tournaments
+      </button>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 px-4 md:px-0">
-        
-        {/* LEFT COLUMN */}
-        <div className="lg:col-span-2 space-y-8">
-          
-          <TabNavigation 
-            tabs={['OVERVIEW', 'CATEGORIES', 'BRACKETS']} 
-            activeTab={activeTab} 
-            setActiveTab={setActiveTab} 
-          />
-
-          {/* TAB: OVERVIEW */}
-          {activeTab === 'OVERVIEW' && (
-            <TournamentRules description={t.description} rules={t.rules} />
+      {/* 🌟 Top Banner Section */}
+      <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden mb-8">
+        <div className="h-64 md:h-80 w-full bg-slate-100 relative">
+          {tournament.banner_url ? (
+            <img src={tournament.banner_url} alt="Cover" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-blue-600 to-indigo-600"></div>
           )}
-
-          {/* TAB: CATEGORIES */}
-          {activeTab === 'CATEGORIES' && (
-            <div className="space-y-4 animate-in slide-in-from-bottom-4 duration-300">
-              <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight mb-2 px-2">
-                Available Events
-              </h3>
-              {t.categories && t.categories.map((cat: any) => (
-                <CategoryCard key={cat.id} category={cat} isRegistrationOpen={isRegistrationOpen} />
-              ))}
-            </div>
-          )}
-
-          {/* TAB: BRACKETS */}
-          {activeTab === 'BRACKETS' && (
-            <div className="bg-white rounded-3xl p-10 border border-slate-200 shadow-sm text-center animate-in slide-in-from-bottom-4 duration-300">
-              <Swords size={48} className="mx-auto text-slate-300 mb-4" />
-              <h3 className="text-xl font-black text-slate-800 uppercase tracking-tight mb-2">Draws not released yet</h3>
-              <p className="text-slate-500 font-medium">Brackets will be visible here once registration closes.</p>
-            </div>
-          )}
-
+          {/* Status Badge */}
+          <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg border border-white/20">
+            <span className={`text-xs font-black tracking-widest uppercase flex items-center gap-2 ${tournament.status === 'COMPLETED' ? 'text-green-600' : 'text-blue-600'}`}>
+              <Activity size={16}/> {tournament.status || 'UPCOMING'}
+            </span>
+          </div>
         </div>
 
-        {/* RIGHT COLUMN (SIDEBAR COMPONENT) */}
-        <div className="lg:col-span-1">
-          <TournamentSidebar 
-            tournament={t} 
-            startDate={startDate} 
-            deadlineDate={deadlineDate} 
-            isRegistrationOpen={isRegistrationOpen} 
-          />
-        </div>
+        {/* Content */}
+        <div className="p-8 md:p-10">
+          <h1 className="text-3xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">{tournament.name}</h1>
+          <p className="text-lg text-blue-600 font-bold mb-8">Hosted by {tournament.organization_name || 'SmashFIT Academy'}</p>
 
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div className="flex items-center gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-100">
+              <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 shrink-0"><Calendar size={24}/></div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Dates</p>
+                <p className="font-bold text-slate-800">{formatDate(tournament.start_date)} <br/> {formatDate(tournament.end_date)}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-100">
+              <div className="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 shrink-0"><MapPin size={24}/></div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Location</p>
+                <p className="font-bold text-slate-800 truncate pr-2">{tournament.location || 'Location TBA'}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 bg-slate-50 p-5 rounded-2xl border border-slate-100">
+              <div className="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center text-amber-600 shrink-0"><Trophy size={24}/></div>
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Format</p>
+                <p className="font-bold text-slate-800">{tournament.tournament_type} <br/> <span className="text-slate-500 font-medium text-sm">{tournament.shuttle_type || 'FEATHER'} Shuttle</span></p>
+              </div>
+            </div>
+          </div>
+
+          {tournament.description && (
+            <div>
+              <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">About the Event</h3>
+              <p className="text-slate-700 text-lg leading-relaxed bg-slate-50 p-6 md:p-8 rounded-[2rem] border border-slate-100">
+                {tournament.description}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* 🏸 Categories & Registration Section (Fixed Structure) */}
+      <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 p-8 md:p-10">
+        
+        {/* Header inside the container */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 border-b border-slate-100 pb-6">
+          <h2 className="text-2xl md:text-3xl font-black text-slate-900 flex items-center gap-3">
+            <Users className="text-blue-500" size={32} />
+            Playable Categories
+          </h2>
+          <div className="flex items-center gap-2 text-sm font-bold text-amber-700 bg-amber-50 border border-amber-200 px-5 py-2.5 rounded-xl w-fit">
+            <Clock size={18} /> Deadline: {formatDate(tournament.registration_deadline)}
+          </div>
+        </div>
+
+        {/* Global Action Message */}
+        {regMessage.text && (
+          <div className={`mb-8 p-4 rounded-xl border font-bold flex items-center gap-3 shadow-sm ${regMessage.type === 'error' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-green-50 text-green-700 border-green-200'}`}>
+            {regMessage.type === 'error' ? <AlertCircle size={24} /> : <CheckCircle2 size={24} />}
+            {regMessage.text}
+          </div>
+        )}
+
+        {/* Category Cards */}
+        {tournament.categories && tournament.categories.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {tournament.categories.map((cat: any) => {
+              const currentSlots = Number(cat.current_slots) || 0;
+              const maxSlots = Number(cat.max_slots) || 0;
+              const isFull = currentSlots >= maxSlots;
+              
+              return (
+                <div key={cat.id} className={`rounded-2xl p-6 border transition-all relative overflow-hidden ${isFull ? 'bg-slate-50 border-slate-200' : 'bg-white border-blue-100 hover:border-blue-300 shadow-sm hover:shadow-md'}`}>
+                  {isFull && <div className="absolute top-0 left-0 w-full h-1.5 bg-red-500"></div>}
+                  {!isFull && <div className="absolute top-0 left-0 w-full h-1.5 bg-blue-500"></div>}
+                  
+                  <div className="flex justify-between items-start mb-6 mt-2">
+                    <div>
+                      <h3 className="text-xl font-black text-slate-800 mb-1">{cat.category_name}</h3>
+                      <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">{cat.match_type}</p>
+                    </div>
+                    <div className="bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-2 rounded-xl font-black text-xl flex items-center shadow-sm">
+                      ₹{cat.entry_fee}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between mb-6 bg-slate-100/50 p-4 rounded-xl border border-slate-100">
+                    <div className="flex items-center gap-2 text-slate-600 font-bold text-sm">
+                      <Users size={18} className={isFull ? 'text-red-500' : 'text-blue-500'} />
+                      <span>Slots Filled</span>
+                    </div>
+                    <div className="font-black text-lg text-slate-800">
+                      <span className={isFull ? 'text-red-500' : 'text-blue-600'}>{currentSlots}</span> 
+                      <span className="text-slate-400 mx-1">/</span> 
+                      {maxSlots}
+                    </div>
+                  </div>
+
+                  <button 
+                    onClick={() => handleRegister(cat.id)}
+                    disabled={isFull || registeringId === cat.id}
+                    className={`w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2 transition-all shadow-sm ${
+                      isFull 
+                        ? 'bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300' 
+                        : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20 hover:shadow-lg active:scale-95'
+                    }`}
+                  >
+                    {registeringId === cat.id ? <Loader2 className="animate-spin" size={20} /> : null}
+                    {isFull ? 'SOLD OUT' : 'Register Now'}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            <p className="text-slate-500 font-bold">No categories added for this tournament yet.</p>
+          </div>
+        )}
+      </div>
+
     </div>
   );
 };
 
-export default TournamentDetail;
+export default TournamentDetailPage;

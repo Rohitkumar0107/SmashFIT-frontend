@@ -1,4 +1,3 @@
-// src/services/api.ts
 import axios from "axios";
 
 // Ek master Axios instance bana rahe hain
