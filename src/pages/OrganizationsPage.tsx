@@ -35,34 +35,34 @@ const OrganizationsPage = () => {
     <div className="max-w-7xl mx-auto animate-in fade-in duration-500">
       
       {/* 🌟 Premium Header Section */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4 bg-white p-6 md:p-8 rounded-3xl border border-slate-200/60 shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)]">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200/60 shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)]">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">My Organizations</h1>
-          <p className="text-slate-500 font-medium mt-1.5 flex items-center gap-2">
-            <Info size={16} className="text-blue-500" />
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight">My Organizations</h1>
+          <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1.5 flex items-center gap-2">
+            <Info size={14} className="sm:w-4 sm:h-4 text-blue-500" />
             Manage your academies, courts, and amenities here.
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto mt-4 lg:mt-0">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto mt-4 lg:mt-0">
           {/* Search Input */}
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} className="sm:w-4.5 sm:h-4.5" />
             <input 
               type="text" 
               placeholder="Search academies..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 sm:py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
             />
           </div>
 
           {/* Action Button */}
           <Link 
             to="/organizations/create" 
-            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-blue-500/25 shrink-0"
+            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-sm sm:text-base font-bold transition-all shadow-sm hover:shadow-blue-500/25 shrink-0"
           >
-            <Plus size={20} />
+            <Plus size={18} className="sm:w-5 sm:h-5" />
             Add New
           </Link>
         </div>

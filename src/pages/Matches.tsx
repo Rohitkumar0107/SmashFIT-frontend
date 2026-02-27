@@ -71,10 +71,10 @@ const Matches = () => {
     <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
       
       {/* HEADER & TABS */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight italic">MATCH CENTER</h1>
-          <p className="text-slate-700 font-bold text-sm mt-1">Real-time tournament updates</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight italic">MATCH CENTER</h1>
+          <p className="text-slate-700 font-bold text-xs sm:text-sm mt-1">Real-time tournament updates</p>
         </div>
 
         <TabNavigation 

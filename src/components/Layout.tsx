@@ -101,7 +101,7 @@ const Layout = () => {
       `}>
 
         <div className="h-20 flex items-center justify-between px-6 border-b border-slate-100 flex-shrink-0 cursor-pointer" onClick={() => { navigate('/'); setIsMobileMenuOpen(false); }}>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tighter italic">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-black text-slate-800 tracking-tighter italic">
             Smash<span className="text-blue-600">FIT</span>
           </h1>
           {/* Close button for mobile sidebar */}
@@ -164,7 +164,7 @@ const Layout = () => {
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-full py-2 md:py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all text-slate-700"
+                className="w-full bg-slate-50 border border-slate-200 rounded-full py-2 md:py-2.5 pl-10 pr-4 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-100 focus:bg-white transition-all text-slate-700"
               />
             </div>
           </div>
@@ -235,9 +235,9 @@ const Layout = () => {
                 alt={`${user.fullName} Profile`}
                 className="w-10 h-10 rounded-full border border-slate-200 object-cover bg-slate-100"
               />
-              <div className="hidden md:block text-left">
-                <p className="text-sm font-bold text-slate-700 leading-tight">{user.fullName}</p>
-                <p className="text-xs font-medium text-slate-400 capitalize">{user.role}</p>
+              <div className="hidden sm:block text-left">
+                <p className="text-xs sm:text-sm font-bold text-slate-700 leading-tight">{user.fullName}</p>
+                <p className="text-[10px] sm:text-xs font-medium text-slate-400 capitalize">{user.role}</p>
               </div>
             </Link>
           </div>

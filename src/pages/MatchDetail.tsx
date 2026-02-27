@@ -58,15 +58,15 @@ const MatchDetail = () => {
     : { side_a_score: 0, side_b_score: 0 };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto animate-in fade-in duration-500">
+    <div className="space-y-4 sm:space-y-6 max-w-5xl mx-auto animate-in fade-in duration-500">
       
       {/* 1. TOP NAVIGATION & BADGES */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-0 sm:px-2">
         <button 
           onClick={() => navigate(-1)} 
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-black uppercase tracking-tight transition-colors"
+          className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 hover:text-slate-900 font-black uppercase tracking-tight transition-colors"
         >
-          <ArrowLeft size={20} /> Back
+          <ArrowLeft size={18} /> Back
         </button>
 
         {/* Humara apna common StatusBadge use kar rahe hain (status ko uppercase bhejkar) */}

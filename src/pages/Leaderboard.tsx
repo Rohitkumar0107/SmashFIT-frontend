@@ -61,33 +61,33 @@ const Leaderboard = () => {
     <div className="space-y-8 animate-in fade-in duration-500 max-w-6xl mx-auto">
       
       {/* 1. HEADER & TOGGLE */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight italic flex items-center gap-3">
-            <Trophy className="text-yellow-500" size={32} /> LEADERBOARD
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight italic flex items-center gap-2 sm:gap-3">
+            <Trophy className="text-yellow-500 w-7 h-7 sm:w-8 sm:h-8" size={28} /> LEADERBOARD
           </h1>
-          <p className="text-slate-600 font-bold text-sm mt-1">
+          <p className="text-xs sm:text-sm text-slate-600 font-bold mt-1">
             {activeView === 'global' ? 'Overall SmashFIT World Rankings' : 'Current Tournament Standings'}
           </p>
         </div>
 
         {/* View Toggle (Global vs Tournament) */}
-        <div className="flex bg-slate-200/70 p-1.5 rounded-2xl shadow-inner border border-slate-300">
+        <div className="flex bg-slate-200/70 p-1 sm:p-1.5 rounded-2xl shadow-inner border border-slate-300">
           <button
             onClick={() => setActiveView('global')}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all ${
               activeView === 'global' ? 'bg-white text-blue-700 shadow-md' : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Globe size={16} /> Global
+            <Globe size={14} className="sm:w-4 sm:h-4" /> Global
           </button>
           <button
             onClick={() => setActiveView('tournament')}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all ${
               activeView === 'tournament' ? 'bg-white text-blue-700 shadow-md' : 'text-slate-500 hover:text-slate-800'
             }`}
           >
-            <Medal size={16} /> Tournament
+            <Medal size={14} className="sm:w-4 sm:h-4" /> Tournament
           </button>
         </div>
       </div>
