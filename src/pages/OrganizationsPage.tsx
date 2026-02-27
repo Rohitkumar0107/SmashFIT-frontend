@@ -8,7 +8,7 @@ const OrganizationsPage = () => {
   const [orgs, setOrgs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [searchQuery, setSearchQuery] = useState(''); // 🔍 Search feature
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchOrganizations = async () => {
@@ -25,7 +25,6 @@ const OrganizationsPage = () => {
     fetchOrganizations();
   }, []);
 
-  // Filter organizations based on search input
   const filteredOrgs = orgs.filter(org => 
     org.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     (org.location && org.location.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -33,21 +32,28 @@ const OrganizationsPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto animate-in fade-in duration-500">
-      
-      {/* 🌟 Premium Header Section */}
+
+      {/* Header */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4 bg-white p-4 sm:p-6 md:p-8 rounded-3xl border border-slate-200/60 shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)]">
         <div>
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight">My Organizations</h1>
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
+            My Organizations
+          </h1>
           <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1.5 flex items-center gap-2">
             <Info size={14} className="sm:w-4 sm:h-4 text-blue-500" />
             Manage your academies, courts, and amenities here.
           </p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full lg:w-auto mt-4 lg:mt-0">
-          {/* Search Input */}
+
+          {/* Search */}
           <div className="relative w-full sm:w-64">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} className="sm:w-4.5 sm:h-4.5" />
+            <Search
+              size={16}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 sm:w-4.5 sm:h-4.5"
+            />
+
             <input 
               type="text" 
               placeholder="Search academies..." 
@@ -57,7 +63,7 @@ const OrganizationsPage = () => {
             />
           </div>
 
-          {/* Action Button */}
+          {/* Create Button */}
           <Link 
             to="/organizations/create" 
             className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl text-sm sm:text-base font-bold transition-all shadow-sm hover:shadow-blue-500/25 shrink-0"
@@ -68,11 +74,10 @@ const OrganizationsPage = () => {
         </div>
       </div>
 
-      {/* 🚀 State Handling (Loading, Error, Data, Empty) */}
+      {/* States */}
       {loading ? (
-        // Skeleton Loaders (Premium feel)
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {[1, 2, 3].map((n) => (
+          {[1,2,3].map((n) => (
             <div key={n} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm animate-pulse h-48 flex flex-col justify-between">
               <div className="flex gap-4">
                 <div className="w-16 h-16 bg-slate-200 rounded-xl"></div>
@@ -91,7 +96,6 @@ const OrganizationsPage = () => {
           {error}
         </div>
       ) : filteredOrgs.length > 0 ? (
-        // Grid Display
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredOrgs.map((org) => (
             <OrganizationCard 
@@ -102,25 +106,27 @@ const OrganizationsPage = () => {
               courtCount={org.court_count}
               status={org.status}
               logoUrl={org.logo_url}
-              amenities={org.amenities} // 👈 Backend JSON pass kiya
+              amenities={org.amenities}
             />
           ))}
         </div>
       ) : (
-        // Empty State / No Search Results
         <div className="text-center py-28 bg-white/50 backdrop-blur-sm rounded-3xl border-2 border-dashed border-slate-200">
           <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm border border-slate-100 mb-6">
             <Building className="text-slate-300 w-12 h-12" />
           </div>
+
           <h3 className="text-2xl font-black text-slate-800">
             {searchQuery ? 'No matching academies found' : 'No Organizations Yet'}
           </h3>
+
           <p className="text-slate-500 font-medium mt-3 mb-8 max-w-md mx-auto leading-relaxed">
             {searchQuery 
-              ? `We couldn't find any academy matching "${searchQuery}". Try a different name or location.`
+              ? `We couldn't find any academy matching "${searchQuery}". Try different name or location.`
               : 'You haven\'t set up any badminton academy yet. Register your first club to start hosting tournaments and tracking matches!'
             }
           </p>
+
           {!searchQuery && (
             <Link 
               to="/organizations/create" 
