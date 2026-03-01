@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, Calendar, MapPin, Trophy, Users, AlertCircle, 
+import {
+  ArrowLeft, Calendar, MapPin, Trophy, Users, AlertCircle,
   Loader2, CheckCircle2, Clock, Activity
 } from 'lucide-react';
 import { tournamentService } from '../services/tournament.service';
@@ -9,11 +9,11 @@ import { tournamentService } from '../services/tournament.service';
 const TournamentDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  
+
   const [tournament, setTournament] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   // Registration States
   const [registeringId, setRegisteringId] = useState<string | null>(null);
   const [regMessage, setRegMessage] = useState({ type: '', text: '' });
@@ -38,15 +38,15 @@ const TournamentDetailPage = () => {
     try {
       setRegisteringId(categoryId);
       setRegMessage({ type: '', text: '' });
-      
+
       await tournamentService.register(categoryId);
-      
+
       setRegMessage({ type: 'success', text: 'Successfully registered for the event!' });
-      
+
       // Optimitiscally update slots
       setTournament((prev: any) => ({
         ...prev,
-        categories: prev.categories.map((cat: any) => 
+        categories: prev.categories.map((cat: any) =>
           cat.id === categoryId ? { ...cat, current_slots: cat.current_slots + 1 } : cat
         )
       }));
@@ -73,11 +73,21 @@ const TournamentDetailPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto animate-in fade-in duration-500 pb-12 px-4">
-      
-      {/* 🔙 Back Button */}
-      <button onClick={() => navigate('/tournaments')} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold mb-6 bg-white px-5 py-2.5 rounded-2xl shadow-sm border border-slate-200 transition-all">
-        <ArrowLeft size={18} /> Back to Tournaments
-      </button>
+
+      {/* 🔙 Top Controls */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+        <button onClick={() => navigate('/tournaments')} className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold bg-white px-5 py-2.5 rounded-2xl shadow-sm border border-slate-200 transition-all">
+          <ArrowLeft size={18} /> Back to Tournaments
+        </button>
+        <div className="flex items-center gap-3">
+          <button onClick={() => navigate(`/tournaments/${id}/courts`)} className="flex items-center gap-2 text-slate-700 hover:text-slate-900 hover:bg-slate-50 font-bold bg-white px-5 py-2.5 rounded-2xl shadow-sm border border-slate-200 transition-all">
+            Live Courts Dashboard
+          </button>
+          <button onClick={() => navigate(`/tournaments/${id}/brackets`)} className="flex items-center gap-2 text-blue-600 hover:text-white hover:bg-blue-600 font-bold bg-blue-50 px-5 py-2.5 rounded-2xl shadow-sm border border-blue-200 transition-all">
+            View Tournament Draw
+          </button>
+        </div>
+      </div>
 
       {/* 🌟 Top Banner Section */}
       <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden mb-8">
@@ -90,7 +100,7 @@ const TournamentDetailPage = () => {
           {/* Status Badge */}
           <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-xl shadow-lg border border-white/20">
             <span className={`text-xs font-black tracking-widest uppercase flex items-center gap-2 ${tournament.status === 'COMPLETED' ? 'text-green-600' : 'text-blue-600'}`}>
-              <Activity size={16}/> {tournament.status || 'UPCOMING'}
+              <Activity size={16} /> {tournament.status || 'UPCOMING'}
             </span>
           </div>
         </div>
@@ -137,7 +147,7 @@ const TournamentDetailPage = () => {
 
       {/* 🏸 Categories & Registration Section (Fixed Structure) */}
       <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 p-4 sm:p-6 md:p-8 lg:p-10">
-        
+
         {/* Header inside the container */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-8 gap-3 md:gap-4 border-b border-slate-100 pb-4 md:pb-6">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 flex items-center gap-2 sm:gap-3">
@@ -164,12 +174,12 @@ const TournamentDetailPage = () => {
               const currentSlots = Number(cat.current_slots) || 0;
               const maxSlots = Number(cat.max_slots) || 0;
               const isFull = currentSlots >= maxSlots;
-              
+
               return (
                 <div key={cat.id} className={`rounded-2xl p-4 sm:p-5 md:p-6 border transition-all relative overflow-hidden ${isFull ? 'bg-slate-50 border-slate-200' : 'bg-white border-blue-100 hover:border-blue-300 shadow-sm hover:shadow-md'}`}>
                   {isFull && <div className="absolute top-0 left-0 w-full h-1 sm:h-1.5 bg-red-500"></div>}
                   {!isFull && <div className="absolute top-0 left-0 w-full h-1 sm:h-1.5 bg-blue-500"></div>}
-                  
+
                   <div className="flex justify-between items-start mb-4 sm:mb-5 md:mb-6 mt-1 sm:mt-2">
                     <div>
                       <h3 className="text-base sm:text-lg md:text-xl font-black text-slate-800 mb-0.5 sm:mb-1">{cat.category_name}</h3>
@@ -186,20 +196,19 @@ const TournamentDetailPage = () => {
                       <span>Slots Filled</span>
                     </div>
                     <div className="font-black text-sm sm:text-base md:text-lg text-slate-800">
-                      <span className={isFull ? 'text-red-500' : 'text-blue-600'}>{currentSlots}</span> 
-                      <span className="text-slate-400 mx-1">/</span> 
+                      <span className={isFull ? 'text-red-500' : 'text-blue-600'}>{currentSlots}</span>
+                      <span className="text-slate-400 mx-1">/</span>
                       {maxSlots}
                     </div>
                   </div>
 
-                  <button 
+                  <button
                     onClick={() => handleRegister(cat.id)}
                     disabled={isFull || registeringId === cat.id}
-                    className={`w-full py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center gap-2 transition-all shadow-sm ${
-                      isFull 
-                        ? 'bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300' 
-                        : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20 hover:shadow-lg active:scale-95'
-                    }`}
+                    className={`w-full py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center gap-2 transition-all shadow-sm ${isFull
+                      ? 'bg-slate-200 text-slate-500 cursor-not-allowed border border-slate-300'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20 hover:shadow-lg active:scale-95'
+                      }`}
                   >
                     {registeringId === cat.id ? <Loader2 className="animate-spin w-4 h-4 sm:w-5 sm:h-5" /> : null}
                     {isFull ? 'SOLD OUT' : 'Register Now'}

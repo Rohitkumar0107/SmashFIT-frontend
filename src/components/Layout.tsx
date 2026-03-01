@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Swords, Trophy, BarChart3,
-  Search, Bell, Settings, CheckCircle2, User, LogOut, Menu, X, Building
+  Search, Bell, Settings, CheckCircle2, User, LogOut, Menu, X, Building,
+  Users, CreditCard, Shield, ClipboardCheck
 } from 'lucide-react';
 import { authService } from '../services/auth.service';
 
@@ -79,6 +80,11 @@ const Layout = () => {
     { name: 'Tournaments', path: '/tournaments', icon: Trophy },
     { name: 'Organizations', path: '/organizations', icon: Building },
     { name: 'Leaderboard', path: '/leaderboard', icon: BarChart3 },
+    { name: 'Teams', path: '/teams', icon: Users },
+    { name: 'Umpire Pad', path: '/umpire/latest', icon: ClipboardCheck },
+    { name: 'Payments', path: '/payments', icon: CreditCard },
+    { name: 'Notifications', path: '/notifications', icon: Bell },
+    { name: 'Admin', path: '/admin', icon: Shield },
   ];
 
   return (
@@ -114,15 +120,15 @@ const Layout = () => {
           {menuItems.map((item) => {
             const isActive = location.pathname.includes(item.path);
             const Icon = item.icon;
-            
+
             return (
               <Link
                 key={item.path}
                 to={item.path}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${isActive
-                    ? 'bg-blue-50 text-blue-700 shadow-sm font-bold'
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
+                  ? 'bg-blue-50 text-blue-700 shadow-sm font-bold'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
                   }`}
               >
                 <Icon size={20} className={isActive ? 'text-blue-600' : 'text-slate-400'} />
@@ -216,8 +222,8 @@ const Layout = () => {
                     <p className="text-sm font-black text-slate-900">App Settings</p>
                   </div>
                   <div className="p-2 space-y-1">
-                    <DropdownItem icon={<User size={16} />} label="Edit Profile" />
-                    <DropdownItem icon={<Settings size={16} />} label="Preferences" />
+                    <DropdownItem icon={<User size={16} />} label="Edit Profile" onClick={() => { setIsSettingsOpen(false); navigate('/profile'); }} />
+                    <DropdownItem icon={<Settings size={16} />} label="Preferences" onClick={() => { setIsSettingsOpen(false); navigate('/settings'); }} />
                   </div>
                 </div>
               )}
@@ -244,11 +250,35 @@ const Layout = () => {
         </header>
 
         {/* ================= DYNAMIC OUTLET ================= */}
-        <main className="flex-1 p-4 md:p-8 w-full">
+        <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8 w-full">
           <Outlet />
         </main>
 
       </div>
+
+      {/* ================= MOBILE BOTTOM NAV ================= */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 flex justify-around items-center h-16 z-40 md:hidden safe-area-bottom">
+        {[
+          { icon: LayoutDashboard, path: '/dashboard', label: 'Home' },
+          { icon: Swords, path: '/matches', label: 'Matches' },
+          { icon: Trophy, path: '/tournaments', label: 'Events' },
+          { icon: BarChart3, path: '/leaderboard', label: 'Ranks' },
+          { icon: User, path: '/profile', label: 'Profile' },
+        ].map((item) => {
+          const Icon = item.icon;
+          const isActive = location.pathname.startsWith(item.path);
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex flex-col items-center gap-0.5 px-2 py-1 rounded-lg transition-colors ${isActive ? 'text-blue-600' : 'text-slate-400'}`}
+            >
+              <Icon size={20} />
+              <span className="text-[10px] font-bold">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   );
 };
@@ -272,8 +302,8 @@ const DropdownItem = ({ icon, label, danger = false, onClick }: any) => (
   <button
     onClick={onClick}
     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-colors ${danger
-        ? 'text-red-600 hover:bg-red-50'
-        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+      ? 'text-red-600 hover:bg-red-50'
+      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
       }`}
   >
     {icon} {label}

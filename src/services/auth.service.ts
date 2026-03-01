@@ -10,7 +10,7 @@ export const authService = {
 
   // 2. Google OAuth Login
   googleLogin: async (idToken: string) => {
-    const response = await api.post("/auth/google", { idToken });
+    const response = await api.post("/auth/sso/callback", { idToken });
     return response.data;
   },
 
@@ -36,6 +36,30 @@ export const authService = {
   logout: async () => {
     // backend will remove cookie; we still clear localStorage on frontend
     const response = await api.post("/auth/logout");
+    return response.data;
+  },
+
+  // 6. Forgot password
+  forgotPassword: async (email: string) => {
+    const response = await api.post("/auth/forgot-password", { email });
+    return response.data;
+  },
+
+  // 7. Reset password
+  resetPassword: async (token: string, newPassword: string) => {
+    const response = await api.post("/auth/reset-password", { token, newPassword });
+    return response.data;
+  },
+
+  // 8. Verify email
+  verifyEmail: async (token: string) => {
+    const response = await api.post("/auth/verify-email", { token });
+    return response.data;
+  },
+
+  // 9. Enable MFA
+  enableMfa: async () => {
+    const response = await api.post("/auth/mfa/enable");
     return response.data;
   },
 };

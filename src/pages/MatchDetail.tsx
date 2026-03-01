@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import api from '../services/api';
+import { matchService } from '../services/match.service';
 
 // Shared & Feature Components
 import SkeletonLoader from '../components/ui/SkeletonLoader';
@@ -19,12 +19,12 @@ const MatchDetail = () => {
   useEffect(() => {
     const fetchMatchDetails = async () => {
       if (!matchId || matchId === 'undefined') return;
-      
+
       try {
         setLoading(true);
-        const response = await api.get(`/matches/${matchId}`);
-        if (response.data.success) {
-          setMatch(response.data.data);
+        const response = await matchService.getMatchById(matchId);
+        if (response.success) {
+          setMatch(response.data);
         }
       } catch (error) {
         console.error("Match detail fetch error:", error);
@@ -51,34 +51,44 @@ const MatchDetail = () => {
   // --- Helpers ---
   const isUpcoming = match.status === 'Upcoming';
   const isLive = match.status === 'Live';
-  
+
   // Get current score (Last set in the array, or 0-0 if no scores)
-  const currentSet = match.scores && match.scores.length > 0 
-    ? match.scores[match.scores.length - 1] 
+  const currentSet = match.scores && match.scores.length > 0
+    ? match.scores[match.scores.length - 1]
     : { side_a_score: 0, side_b_score: 0 };
 
   return (
     <div className="space-y-4 sm:space-y-6 max-w-5xl mx-auto animate-in fade-in duration-500">
-      
+
       {/* 1. TOP NAVIGATION & BADGES */}
       <div className="flex items-center justify-between px-0 sm:px-2">
-        <button 
-          onClick={() => navigate(-1)} 
+        <button
+          onClick={() => navigate('/matches')}
           className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 hover:text-slate-900 font-black uppercase tracking-tight transition-colors"
         >
           <ArrowLeft size={18} /> Back
         </button>
 
-        {/* Humara apna common StatusBadge use kar rahe hain (status ko uppercase bhejkar) */}
-        <StatusBadge status={match.status.toUpperCase()} />
+        <div className="flex items-center gap-3">
+          {isLive && (
+            <button
+              onClick={() => navigate(`/umpire/${matchId}`)}
+              className="flex items-center gap-2 text-xs sm:text-sm bg-emerald-600 hover:bg-emerald-700 text-white px-3 sm:px-4 py-2 rounded-xl font-bold transition-all active:scale-95 shadow-sm"
+            >
+              🏸 Umpire Pad
+            </button>
+          )}
+          {/* Humara apna common StatusBadge use kar rahe hain (status ko uppercase bhejkar) */}
+          <StatusBadge status={match.status.toUpperCase()} />
+        </div>
       </div>
 
       {/* 2. MAIN SCOREBOARD CARD */}
-      <ScoreboardCard 
-        match={match} 
-        isLive={isLive} 
-        isUpcoming={isUpcoming} 
-        currentSet={currentSet} 
+      <ScoreboardCard
+        match={match}
+        isLive={isLive}
+        isUpcoming={isUpcoming}
+        currentSet={currentSet}
       />
 
       {/* 3. SET-BY-SET HISTORY & EXTRA DETAILS */}
@@ -86,7 +96,7 @@ const MatchDetail = () => {
         <SetHistory scores={match.scores} isUpcoming={isUpcoming} />
         <MatchInfoBox match={match} />
       </div>
-      
+
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Globe, Medal, ChevronDown, Search } from 'lucide-react';
-import api from '../services/api';
+import { leaderboardService } from '../services/leaderboard.service';
 
 // 🧩 Apne naye Shared & Feature Components
 import SearchInput from '../components/ui/SearchInput';
@@ -21,7 +21,7 @@ const Leaderboard = () => {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState<'global' | 'tournament'>('global');
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Real API Data State
   const [globalRankings, setGlobalRankings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,9 +31,9 @@ const Leaderboard = () => {
     const fetchGlobalLeaderboard = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/leaderboard/global');
-        if (response.data.success) {
-          setGlobalRankings(response.data.data);
+        const response = await leaderboardService.getGlobalLeaderboard();
+        if (response.success) {
+          setGlobalRankings(response.data);
         }
       } catch (error) {
         console.error("Failed to fetch global leaderboard:", error);
@@ -46,11 +46,11 @@ const Leaderboard = () => {
   }, []);
 
   // 🔍 Search Filter Logic
-  const filteredGlobalRankings = globalRankings.filter(player => 
+  const filteredGlobalRankings = globalRankings.filter(player =>
     player.full_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const filteredTournamentStandings = TOURNAMENT_STANDINGS.filter(player => 
+  const filteredTournamentStandings = TOURNAMENT_STANDINGS.filter(player =>
     player.full_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -59,7 +59,7 @@ const Leaderboard = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-6xl mx-auto">
-      
+
       {/* 1. HEADER & TOGGLE */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
         <div>
@@ -75,17 +75,15 @@ const Leaderboard = () => {
         <div className="flex bg-slate-200/70 p-1 sm:p-1.5 rounded-2xl shadow-inner border border-slate-300">
           <button
             onClick={() => setActiveView('global')}
-            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all ${
-              activeView === 'global' ? 'bg-white text-blue-700 shadow-md' : 'text-slate-500 hover:text-slate-800'
-            }`}
+            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all ${activeView === 'global' ? 'bg-white text-blue-700 shadow-md' : 'text-slate-500 hover:text-slate-800'
+              }`}
           >
             <Globe size={14} className="sm:w-4 sm:h-4" /> Global
           </button>
           <button
             onClick={() => setActiveView('tournament')}
-            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all ${
-              activeView === 'tournament' ? 'bg-white text-blue-700 shadow-md' : 'text-slate-500 hover:text-slate-800'
-            }`}
+            className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all ${activeView === 'tournament' ? 'bg-white text-blue-700 shadow-md' : 'text-slate-500 hover:text-slate-800'
+              }`}
           >
             <Medal size={14} className="sm:w-4 sm:h-4" /> Tournament
           </button>
@@ -94,13 +92,13 @@ const Leaderboard = () => {
 
       {/* 2. CONTROLS (Search & Filters) */}
       <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-        
+
         {/* Reusable Search Component */}
-        <SearchInput 
-          value={searchQuery} 
-          onChange={setSearchQuery} 
-          placeholder="Search player..." 
-          variant="light" 
+        <SearchInput
+          value={searchQuery}
+          onChange={setSearchQuery}
+          placeholder="Search player..."
+          variant="light"
         />
 
         {/* Tournament Dropdown */}
@@ -114,12 +112,12 @@ const Leaderboard = () => {
 
       {/* 3. THE LEADERBOARD TABLE */}
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden min-h-[400px]">
-        
+
         {/* Table Header */}
         <div className="grid grid-cols-12 gap-4 p-5 bg-slate-50 border-b border-slate-200 text-xs font-black text-slate-400 uppercase tracking-widest">
           <div className="col-span-2 sm:col-span-1 text-center">Rank</div>
           <div className="col-span-6 sm:col-span-5">Player</div>
-          
+
           {activeView === 'global' ? (
             <>
               <div className="col-span-4 sm:col-span-2 text-center">Win Rate</div>
@@ -139,20 +137,20 @@ const Leaderboard = () => {
         {loading && activeView === 'global' ? (
           <SkeletonLoader text="Loading Ranks..." minHeight="min-h-[300px]" />
         ) : activeDataList.length === 0 ? (
-          <EmptyState 
-            icon={<Search size={48} />} 
-            title="No players found" 
-            subtitle={`No results matching "${searchQuery}"`} 
+          <EmptyState
+            icon={<Search size={48} />}
+            title="No players found"
+            subtitle={`No results matching "${searchQuery}"`}
           />
         ) : (
           <div className="divide-y divide-slate-100">
             {activeDataList.map((player, index) => (
-              <PlayerRankRow 
-                key={player.id} 
-                player={player} 
-                index={index} 
-                activeView={activeView} 
-                onClick={() => navigate(`/player/${player.id}`)} 
+              <PlayerRankRow
+                key={player.id}
+                player={player}
+                index={index}
+                activeView={activeView}
+                onClick={() => navigate(`/player/${player.id}`)}
               />
             ))}
           </div>

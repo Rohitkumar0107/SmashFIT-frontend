@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom'; 
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Search } from 'lucide-react';
-import api from '../services/api'; 
+import { matchService } from '../services/match.service';
 
 // Components
 import TabNavigation from '../components/ui/TabNavigation';
@@ -14,8 +14,8 @@ import CancelledCard from '../components/matches/CancelledCard';
 
 const Matches = () => {
   const navigate = useNavigate();
-  const location = useLocation(); 
-  
+  const location = useLocation();
+
   const [activeTab, setActiveTab] = useState(location.state?.tab || 'Live');
   const [matches, setMatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,10 +34,10 @@ const Matches = () => {
     const fetchMatches = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/matches/all'); 
-        console.log('API response for matches', response.data);
-        if (response.data.success) {
-          setMatches(response.data.data || []);
+        const response = await matchService.getAllMatches();
+        console.log('API response for matches', response);
+        if (response.success) {
+          setMatches(response.data || []);
         } else {
           setMatches([]);
         }
@@ -69,7 +69,7 @@ const Matches = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 max-w-7xl mx-auto">
-      
+
       {/* HEADER & TABS */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
         <div>
@@ -77,7 +77,7 @@ const Matches = () => {
           <p className="text-slate-700 font-bold text-xs sm:text-sm mt-1">Real-time tournament updates</p>
         </div>
 
-        <TabNavigation 
+        <TabNavigation
           tabs={['Live', 'Upcoming', 'Completed', 'Cancelled']}
           activeTab={activeTab}
           setActiveTab={handleTabChange}
@@ -93,9 +93,9 @@ const Matches = () => {
             filteredMatches.map((match) => {
               const status = match.status?.toUpperCase();
               return (
-                <div 
+                <div
                   key={match.id}
-                  onClick={() => handleCardClick(match.id)} 
+                  onClick={() => handleCardClick(match.id)}
                   className="cursor-pointer"
                 >
                   {status === 'LIVE' && <LiveCard match={match} />}
@@ -106,10 +106,10 @@ const Matches = () => {
               );
             })
           ) : (
-            <EmptyState 
-              icon={<Search size={48} />} 
-              title="No matches found" 
-              subtitle={`There are no ${activeTab.toLowerCase()} matches right now.`} 
+            <EmptyState
+              icon={<Search size={48} />}
+              title="No matches found"
+              subtitle={`There are no ${activeTab.toLowerCase()} matches right now.`}
             />
           )}
         </div>

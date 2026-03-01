@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Activity, Clock, Crown } from 'lucide-react';
-import api from '../services/api';
+import { matchService } from '../services/match.service';
 
 // Components
 import StatsCard from '../components/cards/StatsCard';
@@ -20,10 +20,10 @@ const Dashboard = () => {
     const fetchDashboardMatches = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/matches/all');
-        console.log('dashboard matches response', response.data);
-        if (response.data.success) {
-          setMatches(response.data.data || []);
+        const response = await matchService.getAllMatches();
+        console.log('dashboard matches response', response);
+        if (response.success) {
+          setMatches(response.data || []);
         } else {
           setMatches([]);
         }
@@ -54,42 +54,42 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-4 sm:space-y-6 animate-in fade-in duration-500">
-      
+
       {/* 1. TOP QUICK STATS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatsCard 
-          title="Live Matches" 
-          value={liveCount} 
-          icon={<Activity className="text-green-500" />} 
-          trend="Right now" 
+        <StatsCard
+          title="Live Matches"
+          value={liveCount}
+          icon={<Activity className="text-green-500" />}
+          trend="Right now"
           onClick={() => navigate('/matches', { state: { tab: 'Live' } })}
         />
-        <StatsCard 
-          title="Upcoming" 
-          value={upcomingCount} 
-          icon={<Clock className="text-blue-500" />} 
-          trend="Scheduled" 
+        <StatsCard
+          title="Upcoming"
+          value={upcomingCount}
+          icon={<Clock className="text-blue-500" />}
+          trend="Scheduled"
           onClick={() => navigate('/matches', { state: { tab: 'Upcoming' } })}
         />
-        <StatsCard 
-          title="Completed" 
-          value={completedCount} 
-          icon={<Trophy className="text-orange-500" />} 
-          trend="Tournament History" 
+        <StatsCard
+          title="Completed"
+          value={completedCount}
+          icon={<Trophy className="text-orange-500" />}
+          trend="Tournament History"
           onClick={() => navigate('/matches', { state: { tab: 'Completed' } })}
         />
-        <StatsCard 
-          title="Current MVP" 
-          value="Rohit K." 
-          icon={<Crown className="text-yellow-500" />} 
-          trend="Rank #1 Player" 
-          onClick={() => navigate('/leaderboard')} 
+        <StatsCard
+          title="Current MVP"
+          value="Rohit K."
+          icon={<Crown className="text-yellow-500" />}
+          trend="Rank #1 Player"
+          onClick={() => navigate('/leaderboard')}
         />
       </div>
 
       {/* 2. MAIN GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        
+
         {/* LEFT COLUMN */}
         <div className="lg:col-span-2 space-y-6">
           <MatchCenter matches={matches} loading={loading} />
@@ -101,7 +101,7 @@ const Dashboard = () => {
           <LeaderboardWidget />
           <ActivityFeedWidget />
         </div>
-        
+
       </div>
     </div>
   );
