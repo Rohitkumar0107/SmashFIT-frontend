@@ -48,7 +48,10 @@ const Layout = () => {
           const u = data.user;
           setUser({
             fullName: u.full_name,
-            role: u.role || 'Player',
+            // normalize role casing: ADMIN/UMPIRE -> Admin/Umpire
+            role: u.role ?
+              (u.role.charAt(0).toUpperCase() + u.role.slice(1).toLowerCase())
+              : 'Player',
             profilePic: u.picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.full_name}`
           });
         }
@@ -87,6 +90,18 @@ const Layout = () => {
     { name: 'Admin', path: '/admin', icon: Shield },
   ];
 
+  // filter items based on role
+  const roleKey = user.role?.toLowerCase();
+  const filteredMenuItems = menuItems.filter(item => {
+    if (item.path === '/umpire/latest') {
+      return roleKey === 'admin' || roleKey === 'umpire';
+    }
+    if (item.path === '/admin') {
+      return roleKey === 'admin';
+    }
+    return true;
+  });
+
   return (
     <div className="flex min-h-screen bg-[#e3e7eb] font-sans">
 
@@ -117,7 +132,7 @@ const Layout = () => {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-          {menuItems.map((item) => {
+          {filteredMenuItems.map((item) => {
             const isActive = location.pathname.includes(item.path);
             const Icon = item.icon;
 
