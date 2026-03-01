@@ -2,15 +2,27 @@
 import api from "./api";
 
 export const authService = {
-  // 1. Email/Password Login
+  // 1. Email/Password Login - Now initiates OTP flow
   login: async (email: string, password: string) => {
     const response = await api.post("/auth/login", { email, password });
     return response.data;
   },
 
-  // 2. Google OAuth Login
+  // NEW: Verify Login OTP
+  verifyLoginOtp: async (email: string, otp: string) => {
+    const response = await api.post("/auth/verify-login-otp", { email, otp });
+    return response.data;
+  },
+
+  // 2. Google OAuth Login - Now initiates OTP flow
   googleLogin: async (idToken: string) => {
     const response = await api.post("/auth/sso/callback", { idToken });
+    return response.data;
+  },
+
+  // NEW: Verify OAuth OTP
+  verifyOAuthOtp: async (email: string, otp: string) => {
+    const response = await api.post("/auth/verify-oauth-otp", { email, otp });
     return response.data;
   },
 
@@ -20,6 +32,15 @@ export const authService = {
       fullName,
       email,
       password,
+    });
+    return response.data;
+  },
+
+  // NEW: Verify Registration OTP
+  verifyRegistrationOtp: async (email: string, otp: string) => {
+    const response = await api.post("/auth/verify-register-otp", {
+      email,
+      otp,
     });
     return response.data;
   },
@@ -47,7 +68,10 @@ export const authService = {
 
   // 7. Reset password
   resetPassword: async (token: string, newPassword: string) => {
-    const response = await api.post("/auth/reset-password", { token, newPassword });
+    const response = await api.post("/auth/reset-password", {
+      token,
+      newPassword,
+    });
     return response.data;
   },
 

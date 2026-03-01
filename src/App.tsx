@@ -8,6 +8,7 @@ import TournamentDetail from './pages/TournamentDetail';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import OtpVerification from './pages/OtpVerification';
 import MatchDetail from './pages/MatchDetail';
 import OrganizationsPage from './pages/OrganizationsPage';
 import CreateOrganizationPage from './pages/CreateOrganizationPage';
@@ -41,6 +42,7 @@ function App() {
         {/* ================= PUBLIC ROUTES ================= */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-otp" element={<OtpVerification />} />
 
         {/* ================= PROTECTED ROUTES ================= */}
         <Route element={<ProtectedRoute />}>

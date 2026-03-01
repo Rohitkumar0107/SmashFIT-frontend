@@ -29,11 +29,11 @@ const Login = () => {
     try {
       const response = await authService.login(email, password);
 
-      // Response se accessToken nikalo
-      if (response.accessToken) {
-        localStorage.setItem('accessToken', response.accessToken);
-        // after successful login redirect to dashboard
-        navigate('/dashboard');
+      // Store email for OTP verification and redirect to OTP page
+      if (response.email) {
+        sessionStorage.setItem('otpEmail', response.email);
+        sessionStorage.setItem('otpType', 'login');
+        navigate('/verify-otp');
       }
     } catch (err: unknown) {
       const msg = axios.isAxiosError(err)
@@ -53,10 +53,11 @@ const Login = () => {
       const idToken = credentialResponse.credential;
       const response = await authService.googleLogin(idToken!);
 
-      // Response se accessToken nikalo
-      if (response.accessToken) {
-        localStorage.setItem('accessToken', response.accessToken);
-        navigate('/dashboard');
+      // Store email for OTP verification and redirect to OTP page
+      if (response.email) {
+        sessionStorage.setItem('otpEmail', response.email);
+        sessionStorage.setItem('otpType', 'oauth');
+        navigate('/verify-otp');
       }
     } catch (err: unknown) {
       const msg = axios.isAxiosError(err)

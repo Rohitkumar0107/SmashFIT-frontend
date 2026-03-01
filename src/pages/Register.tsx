@@ -29,11 +29,13 @@ const Register = () => {
 
     try {
       await authService.register(fullName, email, password);
-      setSuccessMsg("Account created! Please login now.");
+      setSuccessMsg("Account created! Please verify your email with the OTP.");
 
-      // After registration, send them to login so they can sign in
+      // After registration, store email and redirect to OTP verification
       setTimeout(() => {
-        navigate('/login');
+        sessionStorage.setItem('otpEmail', email);
+        sessionStorage.setItem('otpType', 'registration');
+        navigate('/verify-otp');
       }, 1500);
 
     } catch (err: unknown) {
