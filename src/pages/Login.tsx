@@ -26,6 +26,9 @@ const Login = () => {
     e.preventDefault();
     setError('');
 
+    // clear any old tokens before starting fresh login/OTP
+    localStorage.removeItem('accessToken');
+
     try {
       const response = await authService.login(email, password);
 
@@ -50,6 +53,9 @@ const Login = () => {
     credential?: string;
   }) => {
     try {
+      // clear existing tokens when starting oauth login
+      localStorage.removeItem('accessToken');
+
       const idToken = credentialResponse.credential;
       const response = await authService.googleLogin(idToken!);
 
