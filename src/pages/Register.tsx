@@ -28,7 +28,7 @@ const Register = () => {
     setSuccessMsg('');
 
     try {
-      const response = await authService.register(fullName, email, password);
+      await authService.register(fullName, email, password);
 
       setSuccessMsg("OTP sent successfully! Redirecting...");
       sessionStorage.setItem('otpEmail', email);

@@ -30,7 +30,7 @@ const Login = () => {
     localStorage.removeItem('accessToken');
 
     try {
-      const response = await authService.login(email, password);
+      await authService.login(email, password);
 
       // On Direct login response, navigate to OTP screen
       sessionStorage.setItem('otpEmail', email);
