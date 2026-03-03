@@ -2,8 +2,8 @@ import axios from "axios";
 
 // Ek master Axios instance bana rahe hain
 const api = axios.create({
-  // baseURL: "https://smashfit-backend.onrender.com/api",
-  baseURL: "http://localhost:5000/api",  // Tera Node.js backend ka address
+  baseURL: "https://smashfit-backend.onrender.com/api",
+  // baseURL: "http://localhost:5000/api",  // Tera Node.js backend ka address
   withCredentials: true, // 🔥 YE SABSE IMPORTANT HAI! Iske bina backend refresh token wali cookie accept/send nahi karega.
   headers: {
     "Content-Type": "application/json",
