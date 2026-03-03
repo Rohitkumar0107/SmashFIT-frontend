@@ -111,7 +111,7 @@ const UmpireScorePad = () => {
                         Start Match
                     </button>
                     <button
-                        onClick={() => handleStatusChange("Completed")}
+                        onClick={() => handleStatusChange("COMPLETED")}
                         className="px-4 py-2 bg-slate-900 text-white hover:bg-slate-800 rounded-lg font-bold"
                     >
                         Finish
