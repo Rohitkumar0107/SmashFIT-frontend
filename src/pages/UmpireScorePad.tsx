@@ -105,8 +105,8 @@ const UmpireScorePad = () => {
                 </div>
                 <div className="flex gap-2">
                     <button
-                        onClick={() => handleStatusChange("Live")}
-                        disabled={match.status === "Live"}
+                        onClick={() => handleStatusChange("LIVE")}
+                        disabled={match.status === "LIVE"}
                     >
                         Start Match
                     </button>
