@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Calendar, Trophy, Users, Search, Activity, ChevronRight, Star, Bell } from 'lucide-react';
+import { Play, Calendar, Trophy, Users, Activity, ChevronRight, Star } from 'lucide-react';
 import { tournamentService } from '../services/tournament.service';
 import { matchService } from '../services/match.service';
 
