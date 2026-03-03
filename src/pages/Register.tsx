@@ -28,16 +28,15 @@ const Register = () => {
     setSuccessMsg('');
 
     try {
-      await authService.register(fullName, email, password);
-      setSuccessMsg("Account created! Please verify your email with the OTP.");
+      const response = await authService.register(fullName, email, password);
 
-      // After registration, store email and redirect to OTP verification
+      setSuccessMsg("Account created successfully!");
+      if (response && response.token) {
+        localStorage.setItem('accessToken', response.token);
+      }
       setTimeout(() => {
-        sessionStorage.setItem('otpEmail', email);
-        sessionStorage.setItem('otpType', 'registration');
-        navigate('/verify-otp');
+        navigate('/dashboard');
       }, 1500);
-
     } catch (err: unknown) {
       const msg = axios.isAxiosError(err)
         ? err.response?.data?.message || err.message

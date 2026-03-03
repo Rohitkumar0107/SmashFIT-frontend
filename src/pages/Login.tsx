@@ -32,11 +32,10 @@ const Login = () => {
     try {
       const response = await authService.login(email, password);
 
-      // Store email for OTP verification and redirect to OTP page
-      if (response.email) {
-        sessionStorage.setItem('otpEmail', response.email);
-        sessionStorage.setItem('otpType', 'login');
-        navigate('/verify-otp');
+      // On Direct login response, assume success and retrieve login
+      if (response.token) {
+        localStorage.setItem('accessToken', response.token);
+        navigate('/dashboard');
       }
     } catch (err: unknown) {
       const msg = axios.isAxiosError(err)
@@ -59,11 +58,9 @@ const Login = () => {
       const idToken = credentialResponse.credential;
       const response = await authService.googleLogin(idToken!);
 
-      // Store email for OTP verification and redirect to OTP page
-      if (response.email) {
-        sessionStorage.setItem('otpEmail', response.email);
-        sessionStorage.setItem('otpType', 'oauth');
-        navigate('/verify-otp');
+      if (response.token) {
+        localStorage.setItem('accessToken', response.token);
+        navigate('/dashboard');
       }
     } catch (err: unknown) {
       const msg = axios.isAxiosError(err)
@@ -93,7 +90,7 @@ const Login = () => {
         <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-800">
           Smash<span className="text-blue-600">FIT</span>
         </h2>
-        
+
         {error && <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-3 rounded mb-4 text-sm">{error}</div>}
 
         <form onSubmit={handleLogin} className="space-y-5">
