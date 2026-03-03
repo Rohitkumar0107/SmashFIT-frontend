@@ -3,7 +3,7 @@ import { Link, useLocation, Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Swords, Trophy, BarChart3,
   Search, Bell, Settings, CheckCircle2, User, LogOut, Menu, X, Building,
-  Users, CreditCard, Shield, ClipboardCheck
+  Users, CreditCard, Shield, ClipboardCheck, Activity
 } from 'lucide-react';
 import { authService } from '../services/auth.service';
 
@@ -88,6 +88,7 @@ const Layout = () => {
     { name: 'Payments', path: '/payments', icon: CreditCard },
     { name: 'Notifications', path: '/notifications', icon: Bell },
     { name: 'Admin', path: '/admin', icon: Shield },
+    { name: 'Live Feed', path: '/dashboard-new', icon: Activity },
   ];
 
   // filter items based on role

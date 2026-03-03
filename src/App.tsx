@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
+import DashboardNew from './pages/DashboardNew';
 import Matches from './pages/Matches';
 import CreateTournamentPage from './pages/CreateTournamentPage';
 import Tournaments from './pages/Tournaments';
@@ -55,6 +56,7 @@ function App() {
 
             {/* 🚀 Core Pages */}
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard-new" element={<DashboardNew />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/organizations" element={<OrganizationsPage />} />
             <Route path="/organizations/create" element={<CreateOrganizationPage />} />
