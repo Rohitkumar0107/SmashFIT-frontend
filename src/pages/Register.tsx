@@ -30,12 +30,11 @@ const Register = () => {
     try {
       const response = await authService.register(fullName, email, password);
 
-      setSuccessMsg("Account created successfully!");
-      if (response && response.token) {
-        localStorage.setItem('accessToken', response.token);
-      }
+      setSuccessMsg("OTP sent successfully! Redirecting...");
+      sessionStorage.setItem('otpEmail', email);
+      sessionStorage.setItem('otpType', 'registration');
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/verify-otp');
       }, 1500);
     } catch (err: unknown) {
       const msg = axios.isAxiosError(err)

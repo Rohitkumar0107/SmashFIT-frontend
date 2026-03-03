@@ -32,11 +32,10 @@ const Login = () => {
     try {
       const response = await authService.login(email, password);
 
-      // On Direct login response, assume success and retrieve login
-      if (response.token) {
-        localStorage.setItem('accessToken', response.token);
-        navigate('/dashboard');
-      }
+      // On Direct login response, navigate to OTP screen
+      sessionStorage.setItem('otpEmail', email);
+      sessionStorage.setItem('otpType', 'login');
+      navigate('/verify-otp');
     } catch (err: unknown) {
       const msg = axios.isAxiosError(err)
         ? err.response?.data?.message || err.message
@@ -58,9 +57,17 @@ const Login = () => {
       const idToken = credentialResponse.credential;
       const response = await authService.googleLogin(idToken!);
 
-      if (response.token) {
-        localStorage.setItem('accessToken', response.token);
-        navigate('/dashboard');
+      if (response.email) {
+        sessionStorage.setItem('otpEmail', response.email);
+        sessionStorage.setItem('otpType', 'oauth');
+        navigate('/verify-otp');
+      } else {
+        // Fallback in case email isn't in response but we should be redirecting
+        // Wait, for Google Auth, email comes from credential or response. 
+        // We added email to the response in authController.
+        sessionStorage.setItem('otpEmail', response.email || 'user@example.com');
+        sessionStorage.setItem('otpType', 'oauth');
+        navigate('/verify-otp');
       }
     } catch (err: unknown) {
       const msg = axios.isAxiosError(err)
